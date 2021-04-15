@@ -1,11 +1,11 @@
 const { addonBuilder } = require("stremio-addon-sdk");
 const magnet = require("magnet-uri");
 
-const manifest = { 
-    "id": "org.stremio.helloworld",
+const manifest = {
+    "id": "org.porfanid.stremio_addon",
     "version": "1.0.0",
 
-    "name": "Hello World Addon",
+    "name": "All Movies",
     "description": "Sample addon providing a few public domain movies",
 
     // set what type of resources we will return
@@ -17,8 +17,7 @@ const manifest = {
     "types": ["movie", "series"], // your add-on will be preferred for those content types
 
     // set catalogs, we'll be making 2 catalogs in this case, 1 for movies and 1 for series
-    "catalogs": [
-        {
+    "catalogs": [{
             type: 'movie',
             id: 'helloworldmovies'
         },
@@ -29,7 +28,7 @@ const manifest = {
     ],
 
     // prefix of item IDs (ie: "tt0032138")
-    "idPrefixes": [ "tt" ]
+    "idPrefixes": ["tt"]
 
 };
 
@@ -61,7 +60,7 @@ function fromMagnet(name, type, uri) {
         name: name,
         type: type,
         infoHash: infoHash,
-        sources: (parsed.announce || []).map(function(x) { return "tracker:"+x }).concat(["dht:"+infoHash]),
+        sources: (parsed.announce || []).map(function(x) { return "tracker:" + x }).concat(["dht:" + infoHash]),
         tag: tags,
         title: tags[0], // show quality in the UI
     }
@@ -89,15 +88,15 @@ const generateMetaPreview = function(value, key) {
         id: imdbId,
         type: value.type,
         name: value.name,
-        poster: METAHUB_URL+"/poster/medium/"+imdbId+"/img",
+        poster: METAHUB_URL + "/poster/medium/" + imdbId + "/img",
     }
 }
 
 builder.defineCatalogHandler(function(args, cb) {
     // filter the dataset object and only take the requested type
     const metas = Object.entries(dataset)
-	.filter(([_, value]) => value.type === args.type)
-	.map(([key, value]) => generateMetaPreview(value, key))
+        .filter(([_, value]) => value.type === args.type)
+        .map(([key, value]) => generateMetaPreview(value, key))
 
     return Promise.resolve({ metas: metas })
 })
