@@ -23,11 +23,7 @@
     },
     "homepage": "https://github.com/porfanid/addon-helloworld",
     "dependencies": {
-        "async": "^3.2.0",
-        "imdb-id": "^1.0.2",
-        "kickass-torrent-api": "0.0.3",
         "magnet-uri": "^5.1.3",
-        "phpurlencode": "^1.1.2",
         "stremio-addon-sdk": "^1.1.0"
     }
 }
