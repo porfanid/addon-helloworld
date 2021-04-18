@@ -1,6 +1,7 @@
 const { addonBuilder } = require("stremio-addon-sdk");
 const magnet = require("magnet-uri");
 const fs = require("fs");
+const file="./movies";
 
 const manifest = {
     "id": "org.zircon.stremio_addon",
