@@ -4,6 +4,7 @@ const fs = require("fs");
 
 const read_file = function() {
     fs.readFile('./movies', 'utf8', function(err, data) {
+        console.log("read the data.")
         if (err) {
             return console.log(err);
         }
