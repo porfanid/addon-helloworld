@@ -1,7 +1,31 @@
 const { addonBuilder } = require("stremio-addon-sdk");
 const magnet = require("magnet-uri");
 const fs = require("fs");
-const file="./movies";
+
+const read_file = function() {
+    fs.readFile('./movies', 'utf8', function(err, data) {
+        if (err) {
+            return console.log(err);
+        }
+        data.split("\n").forEach((movie) => {
+            if (movie.match(/[^ ]+/g)) {
+                movie = movie.split(";");
+                id = movie[0];
+                title = movie[1];
+                type = movie[2];
+                link = movie[3];
+                if (link.startsWith("magnet")) {
+                    dataset[id] = fromMagnet(title, type, link);
+                } else if (link.endsWith("mp4")) {
+                    dataset[id] = { name: title, type: type, url: link }
+                } else if (link.indexOf("youtube") > -1) {
+                    yt_id = link.split("v=")[1].split("&")[0];
+                    dataset[id] = { name: title, type: type, ytId: yt_id }
+                }
+            }
+        });
+    });
+}
 
 const manifest = {
     "id": "org.zircon.stremio_addon",
@@ -35,43 +59,8 @@ const manifest = {
 };
 
 const dataset = {};
-// "tt0063350": fromMagnet("Night of the Living Dead", "movie", "magnet:?xt=urn:btih:A7CFBB7840A8B67FD735AC73A373302D14A7CDC9&dn=night+of+the+living+dead+1968+remastered+bdrip+1080p+ita+eng+x265+nahom&tr=udp%3A%2F%2Ftracker.publicbt.com%2Fannounce&tr=udp%3A%2F%2Fglotorrents.pw%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce"),
-fs.readFile('./movies', 'utf8', function(err, data) {
-    if (err) {
-        return console.log(err);
-    }
-    data.split("\n").forEach((movie) => {
-        if (movie.match(/[^ ]+/g)) {
-            movie = movie.split(";");
-            id = movie[0];
-            title = movie[1];
-            type = movie[2];
-            magnet_link = movie[3];
-            dataset[id] = fromMagnet(title, type, magnet_link);
-        }
-    });
-});
-
-
-fs.watchFile("./movies", () => {
-    console.log("The file has been updated");
-    fs.readFile('./movies', 'utf8', function(err, data) {
-        if (err) {
-            return console.log(err);
-        }
-        data.split("\n").forEach((movie) => {
-            if (movie.match(/[^ ]+/g)) {
-                console.log(movie);
-                movie = movie.split(";");
-                id = movie[0];
-                title = movie[1];
-                type = movie[2];
-                magnet_link = movie[3];
-                dataset[id] = fromMagnet(title, type, magnet_link);
-            }
-        });
-    });
-});
+read_file();
+fs.watchFile("./movies", read_file);
 
 
 
