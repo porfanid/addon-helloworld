@@ -1,6 +1,9 @@
 /*
 Import the packages to report the errors
 */
+
+let dataset = {};
+
 const Sentry = require("@sentry/node");
 // or use es6 import statements
 // import * as Sentry from '@sentry/node';
@@ -8,7 +11,9 @@ const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
 // or use es6 import statements
 // import * as Tracing from '@sentry/tracing';
-
+const { addonBuilder } = require("stremio-addon-sdk");
+const magnet = require("magnet-uri");
+const fs = require("fs");
 
 Sentry.init({
     dsn: "https://0c10594218a14d21811eac0317e9a76b@o238115.ingest.sentry.io/5727483",
@@ -19,11 +24,9 @@ Sentry.init({
     tracesSampleRate: 1.0,
 });
 
-const { addonBuilder } = require("stremio-addon-sdk");
-const magnet = require("magnet-uri");
-const fs = require("fs");
 
-const read_file = function() {
+
+const read_file = function(dataset) {
     fs.readFile('./movies', 'utf8', function(err, data) {
         console.log("read the data.")
         if (err) {
@@ -54,7 +57,6 @@ const read_file = function() {
                 }
             }
         });
-        // console.log(dataset)
     });
 }
 
@@ -88,12 +90,10 @@ const manifest = {
     "idPrefixes": ["tt"]
 
 };
+read_file(dataset);
+fs.watchFile("./movies", () => read_file(dataset));
 
-const dataset = {};
-read_file();
-fs.watchFile("./movies", read_file);
-
-
+setTimeout(() => { console.log(dataset) }, 3000);
 
 // utility function to add from magnet
 function fromMagnet(name, type, uri) {
