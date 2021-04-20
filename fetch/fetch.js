@@ -90,9 +90,11 @@ fs.readFile(parent_dir + "/movies", "utf8", function(err, contents) {
                         let current_movie = movies[0];
                         title = current_movie.title;
                         id = current_movie.id;
+                        delete current_movie.title;
+                        delete current_movie.id
+                        delete current_movie.primaryPhoto
 
-
-                        fs.appendFile(parent_dir + "/movies", [id, title, type, magnetlink].join(";") + "\n", "utf8", Sentry.captureException);
+                        fs.appendFile(parent_dir + "/movies", [id, title, type, magnetlink, JSON.stringify(current_movie)].join(";") + "\n", "utf8", Sentry.captureException);
                     }, function(error) {
                         Sentry.captureException(error);
                         console.log(error);

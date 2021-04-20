@@ -35,6 +35,8 @@ const read_file = function() {
             title = movie[1];
             type = movie[2];
             link = movie[3];
+            tags = movie.slice(4, -1);
+            console.log(tags)
             if (link == undefined) {
                 console.log(movie);
                 return;
