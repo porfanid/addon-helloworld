@@ -1,0 +1,60 @@
+const read_file = function() {
+    const dataset = {};
+    const data = fs.readFileSync("./movies", "utf8", Sentry.captureException);
+    data.split("\n").forEach((movie) => {
+        if (movie.match(/[^ ]+/g)) {
+            movie = movie.split(";");
+            id = movie[0];
+            if (!(id in dataset)) {
+                dataset[id] = [];
+            }
+            title = movie[1];
+            type = movie[2];
+            link = movie[3];
+            if (link == undefined) {
+                console.log(movie);
+                return;
+            }
+            if (link.startsWith("magnet")) {
+                dataset[id].push(fromMagnet(title, type, link));
+            } else if (link.endsWith("mp4")) {
+                dataset[id].push({ name: title, type: type, url: link });
+            } else if (link.indexOf("youtube") > -1) {
+                yt_id = link.split("v=")[1].split("&")[0];
+                dataset[id].push({ name: title, type: type, ytId: yt_id });
+            }
+        }
+    });
+    return dataset;
+}
+
+const manifest = {
+    "id": "org.zircon.stremio_addon",
+    "version": "1.0.0",
+
+    "name": "All movies provided by Zircon",
+    "description": "Sample addon providing a lot of movies.",
+
+    // set what type of resources we will return
+    "resources": [
+        "catalog",
+        "stream"
+    ],
+
+    "types": ["movie", "series"], // your add-on will be preferred for those content types
+
+    // set catalogs, we'll be making 2 catalogs in this case, 1 for movies and 1 for series
+    "catalogs": [{
+            type: 'movie',
+            id: 'helloworldmovies'
+        },
+        {
+            type: 'series',
+            id: 'helloworldseries'
+        }
+    ],
+
+    // prefix of item IDs (ie: "tt0032138")
+    "idPrefixes": ["tt"]
+
+};
