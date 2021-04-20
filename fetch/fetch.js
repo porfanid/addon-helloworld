@@ -92,7 +92,7 @@ fs.readFile(parent_dir + "/movies", "utf8", function(err, contents) {
                         id = current_movie.id;
 
 
-                        fs.appendFile(parent_dir + "/movies", [id, title, type, magnetlink].join(",") + "\n", "utf8", Sentry.captureException);
+                        fs.appendFile(parent_dir + "/movies", [id, title, type, magnetlink].join(";") + "\n", "utf8", Sentry.captureException);
                     }, function(error) {
                         Sentry.captureException(error);
                         console.log(error);
