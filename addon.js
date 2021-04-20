@@ -41,7 +41,7 @@ const read_file = function() {
             }
 
             if (link.startsWith("magnet")) {
-                console.log(link);
+                // console.log(link);
                 dataset[id].push(fromMagnet(title, type, link));
             } else if (link.endsWith("mp4")) {
                 dataset[id].push({ name: title, type: type, url: link });
@@ -76,7 +76,7 @@ const manifest = {
     }]
 
 };
-
+/*
 const dataset = {
     // fileIdx is the index of the file within the torrent ; if not passed, the largest file will be selected
     "tt0032138": [{ name: "The Wizard of Oz", type: "movie", infoHash: "24c8802e2624e17d46cd555f364debd949f2c81e", fileIdx: 0 }],
@@ -93,6 +93,8 @@ const dataset = {
 
     "tt1748166:1:1": [{ name: "Pioneer One", type: "series", infoHash: "07a9de9750158471c3302e4e95edb1107f980fa6" }], // torrent for season 1, episode 1
 };
+*/
+const dataset = read_file();
 // console.log(dataset);
 
 // utility function to add from magnet
@@ -103,12 +105,12 @@ function fromMagnet(name, type, uri) {
     if (uri.match(/720p/i)) tags.push("720p");
     if (uri.match(/1080p/i)) tags.push("1080p");
     return {
-        name: tags[0],
+        name: "KickAss Torrents\n" + tags[0],
         type: type,
         infoHash: infoHash,
         sources: (parsed.announce || []).map(function(x) { return "tracker:" + x }).concat(["dht:" + infoHash]),
         tag: tags,
-        title: name, // show quality in the UI
+        title: name + "\n" + tags.join(" "), // show quality in the UI
     }
 }
 
@@ -117,10 +119,8 @@ const builder = new addonBuilder(manifest);
 // Streams handler
 builder.defineStreamHandler(function(args) {
     if (dataset[args.id]) {
-        console.log("success");
         return Promise.resolve({ streams: dataset[args.id] });
     } else {
-        console.log("fail");
         return Promise.resolve({ streams: [] });
     }
 })
@@ -144,8 +144,8 @@ const generateMetaPreview = function(value, key) {
 builder.defineCatalogHandler(function(args, cb) {
     // filter the dataset object and only take the requested type
     const metas = Object.entries(dataset)
-        .filter(([_, value]) => value.type === args.type)
-        .map(([key, value]) => generateMetaPreview(value, key))
+        .filter(([_, value]) => value[0].type === args.type)
+        .map(([key, value]) => generateMetaPreview(value[0], key))
 
     return Promise.resolve({ metas: metas })
 })
