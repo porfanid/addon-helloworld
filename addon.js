@@ -140,6 +140,7 @@ const generateMetaPreview = function(value, key) {
     }
 }
 
+//here lies the bug.
 builder.defineCatalogHandler(function(args, cb) {
     // filter the dataset object and only take the requested type
     const metas = Object.entries(dataset)
