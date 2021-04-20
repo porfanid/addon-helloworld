@@ -105,7 +105,7 @@ function fromMagnet(name, type, uri) {
     if (uri.match(/720p/i)) tags.push("720p");
     if (uri.match(/1080p/i)) tags.push("1080p");
     return {
-        name: "KickAss Torrents\n" + tags[0],
+        name: "KickAss\n" + tags[0],
         type: type,
         infoHash: infoHash,
         sources: (parsed.announce || []).map(function(x) { return "tracker:" + x }).concat(["dht:" + infoHash]),
