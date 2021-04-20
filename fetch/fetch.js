@@ -24,12 +24,12 @@ Sentry.init({
 const kat = require('kickass-torrent-api');
 var imdb = require('imdb-node-api');
 const fs = require("fs");
+var phpurlencode = require('phpurlencode');
 
 let renewal_period = 1;
 
 console.log(kat.baseURL);
 let movies = [];
-let to_append = [];
 
 
 let current_dir = __dirname.split("/")
@@ -72,25 +72,30 @@ fs.readFile(parent_dir + "/movies", "utf8", function(err, contents) {
         }
         kat.getMovies({ page: contents }).then(
             data => {
-                //
                 number = data["total_results"];
                 movies = data["results"];
+                let current_movie_index = 0;
                 movies.forEach(movie => {
+                    console.log(current_movie_index + " out of " + number);
+                    current_movie_index++;
                     if (movie["torrent magnet link"].indexOf("https://mylink.cx/?url=") < 0) {
                         return;
                     }
-                    const magnetlink = movie["torrent magnet link"].split("https://mylink.cx/?url=")[1].split("&")[0];
+                    const magnetlink = phpurlencode.decode(movie["torrent magnet link"].split("https://mylink.cx/?url=")[1].split("&")[0]);
                     console.log(magnetlink);
                     let i = 0;
                     let title = movie["title"].replace(/\./g, m => !i++ ? m : ' ').split(/[0-9][0-9][0-9][0-9]/g)[0];
                     const type = "movie";
-                    imdb.searchMovies(title, function(movies) {
+                    imdb.searchMovies(phpurlencode.encode(title), function(movies) {
                         let current_movie = movies[0];
                         title = current_movie.title;
                         id = current_movie.id;
-                        to_append.push([id, title, type, magnetlink]);
+
+
+                        fs.appendFile(parent_dir + "/movies", [id, title, type, magnetlink].join(",") + "\n", "utf8", Sentry.captureException);
                     }, function(error) {
                         Sentry.captureException(error);
+                        console.log(error);
                         return null;
                     });
                 });
