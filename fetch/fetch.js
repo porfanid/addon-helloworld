@@ -2,6 +2,9 @@ const kat = require('kickass-torrent-api');
 const imdb = require('imdb-api');
 const fs = require("fs");
 
+
+imdb.get({ name: 'The Toxic Avenger' }, { apiKey: '7e51b15f', timeout: 30000 }).then(console.log).catch(console.log);
+
 let renewal_period = 1;
 
 console.log(kat.baseURL);

@@ -1,31 +1,30 @@
 {
-  "name": "kickass-torrents",
-  "version": "2.1.0",
-  "description": "Hello World add-on for stremio",
-  "main": "server.js",
-  "scripts": {
-    "test": "node test/*",
-    "start": "node server.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/porfanid/addon-helloworld.git"
-  },
-  "keywords": [
-    "stremio",
-    "stremio-addons",
-    "addons"
-  ],
-  "author": "Zircon",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/porfanid/addon-helloworld/issues"
-  },
-  "homepage": "https://github.com/porfanid/addon-helloworld",
-  "dependencies": {
-    "imdb-api": "^4.4.1",
-    "kickass-torrent-api": "0.0.3",
-    "magnet-uri": "^5.1.3",
-    "stremio-addon-sdk": "^1.1.0"
-  }
+    "name": "kickass-torrents",
+    "version": "2.1.0",
+    "description": "Hello World add-on for stremio",
+    "main": "server.js",
+    "scripts": {
+        "test": "node test/*",
+        "start": "node server.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/porfanid/addon-helloworld.git"
+    },
+    "keywords": [
+        "stremio",
+        "stremio-addons",
+        "addons"
+    ],
+    "author": "Zircon",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/porfanid/addon-helloworld/issues"
+    },
+    "homepage": "https://github.com/porfanid/addon-helloworld",
+    "dependencies": {
+        "kickass-torrent-api": "0.0.3",
+        "magnet-uri": "^5.1.3",
+        "stremio-addon-sdk": "^1.1.0"
+    }
 }
