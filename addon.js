@@ -34,19 +34,27 @@ const read_file = function() {
             if (movie.match(/[^ ]+/g)) {
                 movie = movie.split(";");
                 id = movie[0];
+                if (!(id in dataset)) {
+                    dataset[id] = [];
+                }
                 title = movie[1];
                 type = movie[2];
                 link = movie[3];
+                if (link == undefined) {
+                    console.log(movie);
+                    return;
+                }
                 if (link.startsWith("magnet")) {
-                    dataset[id] = fromMagnet(title, type, link);
+                    dataset[id].push(fromMagnet(title, type, link));
                 } else if (link.endsWith("mp4")) {
-                    dataset[id] = { name: title, type: type, url: link }
+                    dataset[id].push({ name: title, type: type, url: link });
                 } else if (link.indexOf("youtube") > -1) {
                     yt_id = link.split("v=")[1].split("&")[0];
-                    dataset[id] = { name: title, type: type, ytId: yt_id }
+                    dataset[id].push({ name: title, type: type, ytId: yt_id });
                 }
             }
         });
+        // console.log(dataset)
     });
 }
 
@@ -109,7 +117,7 @@ const builder = new addonBuilder(manifest);
 // Streams handler
 builder.defineStreamHandler(function(args) {
     if (dataset[args.id]) {
-        return Promise.resolve({ streams: [dataset[args.id]] });
+        return Promise.resolve({ streams: dataset[args.id] });
     } else {
         return Promise.resolve({ streams: [] });
     }
