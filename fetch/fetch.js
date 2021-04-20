@@ -1,9 +1,29 @@
+/*
+Import the packages to report the errors
+*/
+const Sentry = require("@sentry/node");
+// or use es6 import statements
+// import * as Sentry from '@sentry/node';
+
+const Tracing = require("@sentry/tracing");
+// or use es6 import statements
+// import * as Tracing from '@sentry/tracing';
+
+
+Sentry.init({
+    dsn: "https://0c10594218a14d21811eac0317e9a76b@o238115.ingest.sentry.io/5727483",
+
+    // Set tracesSampleRate to 1.0 to capture 100%
+    // of transactions for performance monitoring.
+    // We recommend adjusting this value in production
+    tracesSampleRate: 1.0,
+});
+
+
+
 const kat = require('kickass-torrent-api');
-const imdb = require('imdb-api');
+var imdb = require('imdb-node-api');
 const fs = require("fs");
-
-
-imdb.get({ name: 'The Toxic Avenger' }, { apiKey: '7e51b15f', timeout: 30000 }).then(console.log).catch(console.log);
 
 let renewal_period = 1;
 
@@ -11,17 +31,21 @@ console.log(kat.baseURL);
 let movies = [];
 let to_append = [];
 
-console.log(__dirname);
 
-fs.access('./initialized', (err) => {
+let current_dir = __dirname.split("/")
+current_dir.splice(-1, 1);
+parent_dir = current_dir.join("/");
+
+fs.access(__dirname + '/initialized', (err) => {
     if (!err) {
         renewal_period = 7;
     }
 });
 
-fs.readFile("../movies", "utf8", function(err, contents) {
+fs.readFile(parent_dir + "/movies", "utf8", function(err, contents) {
     if (err) {
-        return console.log(err);
+        Sentry.captureException(err);
+        return null;
     }
     contents.split("\n").forEach((movie) => {
         movie = movie.split(";");
@@ -32,16 +56,19 @@ fs.readFile("../movies", "utf8", function(err, contents) {
         movies.push(title);
     });
 
-    fs.readFile("./current_page", "utf8", function(err, contents) {
+    fs.readFile(__dirname + "/current_page", "utf8", function(err, contents) {
+        if (err) {
+            Sentry.captureException(err);
+        }
         contents = Number(contents);
         if (contents == 19) {
-            fs.access('./initialized', (err) => {
+            fs.access(__dirname + '/initialized', (err) => {
                 if (err) {
                     console.log("First time initialization completed successfully");
                     fs.writeFile("./initialized", "");
                 }
             });
-            fs.writeFile("./current_page", 0);
+            fs.writeFile(__dirname + "/current_page", 0);
         }
         kat.getMovies({ page: contents }).then(
             data => {
@@ -52,17 +79,24 @@ fs.readFile("../movies", "utf8", function(err, contents) {
                     if (movie["torrent magnet link"].indexOf("https://mylink.cx/?url=") < 0) {
                         return;
                     }
-                    const magnetlink = movie["torrent magnet link"].split("https://mylink.cx/?url=") //[1].split("&")[0];
+                    const magnetlink = movie["torrent magnet link"].split("https://mylink.cx/?url=")[1].split("&")[0];
+                    console.log(magnetlink);
                     let i = 0;
-                    const title = movie["title"].replace(/\./g, m => !i++ ? m : ' ');
-                    const type = "movie"
-                    if (movies.indexOf(title) == -1) {
-
-                    }
+                    let title = movie["title"].replace(/\./g, m => !i++ ? m : ' ').split(/[0-9][0-9][0-9][0-9]/g)[0];
+                    const type = "movie";
+                    imdb.searchMovies(title, function(movies) {
+                        let current_movie = movies[0];
+                        title = current_movie.title;
+                        id = current_movie.id;
+                        to_append.push([id, title, type, magnetlink]);
+                    }, function(error) {
+                        Sentry.captureException(error);
+                        return null;
+                    });
                 });
             }
-        );
+        ).catch(Sentry.captureException);
 
-        fs.writeFile("./current_page", contents + 1);
+        fs.writeFile(__dirname + "/current_page", contents + 1, () => {}, Sentry.captureException);
     });
 });

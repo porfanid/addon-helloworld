@@ -1,3 +1,24 @@
+/*
+Import the packages to report the errors
+*/
+const Sentry = require("@sentry/node");
+// or use es6 import statements
+// import * as Sentry from '@sentry/node';
+
+const Tracing = require("@sentry/tracing");
+// or use es6 import statements
+// import * as Tracing from '@sentry/tracing';
+
+
+Sentry.init({
+    dsn: "https://0c10594218a14d21811eac0317e9a76b@o238115.ingest.sentry.io/5727483",
+
+    // Set tracesSampleRate to 1.0 to capture 100%
+    // of transactions for performance monitoring.
+    // We recommend adjusting this value in production
+    tracesSampleRate: 1.0,
+});
+
 const { addonBuilder } = require("stremio-addon-sdk");
 const magnet = require("magnet-uri");
 const fs = require("fs");
@@ -6,6 +27,7 @@ const read_file = function() {
     fs.readFile('./movies', 'utf8', function(err, data) {
         console.log("read the data.")
         if (err) {
+            Sentry.captureException(err);
             return console.log(err);
         }
         data.split("\n").forEach((movie) => {
