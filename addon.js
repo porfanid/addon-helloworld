@@ -61,11 +61,12 @@ const read_file = function() {
 }
 
 const manifest = {
-    "id": "community.stremio_addon",
+    "id": "com.porfanid.kickass",
     "version": "1.0.0",
 
-    "name": "All movies provided by Zircon",
+    "name": "Kickass torrents (Unofficial)",
     "description": "Sample addon providing a lot of movies.",
+    "logo": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fthetechsutra.com%2Fwp-content%2Fuploads%2F2019%2F09%2FKickass-Torrents-Alternatives.jpg&f=1&nofb=1",
 
     // set what type of resources we will return
     "resources": [
