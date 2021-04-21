@@ -86,9 +86,9 @@ const read_file = function() {
 
 const manifest = {
     "id": "com.porfanid.kickass",
-    "version": "2.0.0",
+    "version": "2.0.1",
 
-    "name": "Kickass torrents (Unofficial)",
+    "name": "Kickass torrents",
     "description": "Sample addon providing a lot of movies. Developed by Zircon.",
     "logo": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fthetechsutra.com%2Fwp-content%2Fuploads%2F2019%2F09%2FKickass-Torrents-Alternatives.jpg&f=1&nofb=1",
 
