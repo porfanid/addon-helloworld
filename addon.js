@@ -8,6 +8,22 @@ const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
 // or use es6 import statements
 // import * as Tracing from '@sentry/tracing';
+const { exec } = require("child_process");
+
+
+exec("node " + __dirname + "/fetch/fetch.js", (error, stdout, stderr) => {
+    if (error) {
+        console.log(`error: ${error.message}`);
+        return;
+    }
+    if (stderr) {
+        console.log(`stderr: ${stderr}`);
+        return;
+    }
+    console.log(`stdout: ${stdout}`);
+});
+
+
 
 
 Sentry.init({
@@ -22,6 +38,13 @@ const { addonBuilder } = require("stremio-addon-sdk");
 const magnet = require("magnet-uri");
 const fs = require("fs");
 const phpurlencode = require("phpurlencode");
+const cron = require('node-cron');
+
+var task = cron.schedule('0 0 * * *', () => {
+    console.log('Printing this line every day at 1750 Hours London Time.');
+});
+
+task.start();
 
 const read_file = function() {
     const dataset = {};

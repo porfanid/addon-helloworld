@@ -28,6 +28,7 @@
         "imdb-node-api": "^0.1.0",
         "kickass-torrent-api": "0.0.3",
         "magnet-uri": "^5.1.3",
+        "node-cron": "^3.0.0",
         "phpurlencode": "^1.1.2",
         "stremio-addon-sdk": "^1.1.0"
     }
