@@ -21,6 +21,7 @@ Sentry.init({
 const { addonBuilder } = require("stremio-addon-sdk");
 const magnet = require("magnet-uri");
 const fs = require("fs");
+const phpurlencode = require("phpurlencode");
 
 const read_file = function() {
     const dataset = {};
@@ -35,16 +36,19 @@ const read_file = function() {
             title = movie[1];
             type = movie[2];
             link = movie[3];
+            //console.log(link);
             tags = movie.slice(4, -1);
-            console.log(tags)
+            //console.log(tags)
             if (link == undefined) {
-                console.log(movie);
                 return;
             }
 
             if (link.startsWith("magnet")) {
                 // console.log(link);
-                dataset[id].push(fromMagnet(title, type, link));
+                let temp_dict = fromMagnet(title, type, link);
+                if (temp_dict != undefined) {
+                    dataset[id].push(temp_dict);
+                }
             } else if (link.endsWith("mp4")) {
                 dataset[id].push({ name: title, type: type, url: link });
             } else if (link.indexOf("youtube") > -1) {
@@ -102,7 +106,13 @@ const dataset = read_file();
 // utility function to add from magnet
 function fromMagnet(name, type, uri) {
     const parsed = magnet.decode(uri);
-    const infoHash = parsed.infoHash.toLowerCase();
+    let infoHash;
+    try {
+        infoHash = parsed.infoHash.toLowerCase();
+    } catch (e) {
+        console.log(uri + "\n\n")
+        return undefined;
+    }
     const tags = [];
     if (uri.match(/720p/i)) tags.push("720p");
     if (uri.match(/1080p/i)) tags.push("1080p");
