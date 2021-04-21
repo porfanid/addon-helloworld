@@ -11,19 +11,6 @@ const Tracing = require("@sentry/tracing");
 const { exec } = require("child_process");
 
 
-exec("node " + __dirname + "/fetch/fetch.js", (error, stdout, stderr) => {
-    if (error) {
-        console.log(`error: ${error.message}`);
-        return;
-    }
-    if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        return;
-    }
-    console.log(`stdout: ${stdout}`);
-});
-
-
 
 
 Sentry.init({
@@ -40,8 +27,22 @@ const fs = require("fs");
 const phpurlencode = require("phpurlencode");
 const cron = require('node-cron');
 
+
+/**
+ * Update the movie list every day at midnight
+ */
 var task = cron.schedule('0 0 * * *', () => {
-    console.log('Printing this line every day at 1750 Hours London Time.');
+    exec("node " + __dirname + "/fetch/fetch.js", (error, stdout, stderr) => {
+        if (error) {
+            console.log(`error: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.log(`stderr: ${stderr}`);
+            return;
+        }
+        console.log(`stdout: ${stdout}`);
+    });
 });
 
 task.start();
